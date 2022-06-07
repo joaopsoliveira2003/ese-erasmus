@@ -1,0 +1,78 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block 'content' %}
+<div class="container">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mt-2 row">
+          <div class="col-6">
+            <h4><i class="fas fa-search"></i> Filter Options: </h4>
+          </div>
+          <div class="col-6">
+            <button type="submit" class="btn btn-success float-right">Search</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 pt-3">
+            <h4><i class="fas fa-school"></i> School</h4>
+            <input list="schools" type="text" name="school" class="form-control">
+          </div>
+          <datalist id="schools">
+            {% for record in schools %}
+            <option value="{{record.name}}">
+            {% endfor %}
+          </datalist>
+          <div class="col-lg-6 pt-3">
+            <h4><i class="fas fa-user"></i> Coordinator</h4>
+            <input list="coordinators" type="text" name="coordinator" class="form-control">
+            <datalist id="coordinators">
+              {% for record in coordinators %}
+              <option value="{{record.name}}">
+              {% endfor %}
+            </datalist>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 pt-3">
+            <h4><i class="fas fa-book"></i> Educational Sectors</h4>
+            <select name="educational_sector" class="custom-select" size="10" multiple>
+              {% for record in educational_sector %}
+                  <option value="{{record.id}}">{{record.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-lg-6 pt-3">
+            <h4><i class="fas fa-layer-group"></i> Categories</h4>
+            <select name="category" class="custom-select" size="10" multiple>
+              {% for record in category %}
+                  <option value="{{record.id}}">{{record.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 pt-3">
+            <h4><i class="fas fa-city"></i> Cities</h4>
+            <select name="city" class="custom-select" size="10" multiple>
+              {% for record in city %}
+                  <option value="{{record.id}}">{{record.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-lg-6 py-3">
+            <h4><i class="fas fa-flag"></i> Countries</h4>
+            <select name="country" class="custom-select" size="10" multiple>
+              {% for record in country %}
+                  <option value="{{record.id}}">{{record.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+    </form>
+    {% if error != "" %}
+      <div class="text-center">
+          <h5><i class="fas fa-exclamation-triangle"></i> No matching data!</h5>
+      </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>{{title}}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{% static '/css/bootstrap.css' %}">
+        <link href="{% static '/fontawesome/css/all.css' %}" rel="stylesheet">
+        <link rel="icon" type="image/png" href="{% static '/img/icon.png' %}">
+        <style>
+            body, html {
+                height: 100%;
+            }
+            .breadcrumb-item a, .breadcrumb-item + .breadcrumb-item::before {
+                color: white !important;
+                content: ">";
+            }
+            .bg-green {
+                background-color: #44B78B !important;
+            }
+            .text-green {
+                color: #44B78B !important;
+            }
+            .border-black {
+                border-color: black !important;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background-color: #212529 !important">
+            <h4 class="ml-3"><a class="navbar-brand" href="{% url 'dashboard' %}"><img class="d-inline-block"  src="{% static '/img/logo.png' %}"></a></h4>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-list"></i> List Data
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'list' 'schools' %}"><i class="fas fa-school"></i> Schools</a>
+                        <a class="dropdown-item" href="{% url 'list' 'education-sectors' %}"><i class="fas fa-book"></i> Educational Sectors</a>
+                        <a class="dropdown-item" href="{% url 'list' 'categories' %}"><i class="fas fa-layer-group"></i> Categories</a>
+                        <a class="dropdown-item" href="{% url 'list' 'coordinators' %}"><i class="fas fa-user"></i> Coordinators</a>
+                        <a class="dropdown-item" href="{% url 'list' 'cities' %}"><i class="fas fa-city"></i> Cities</a>
+                        <a class="dropdown-item" href="{% url 'list' 'countries' %}"><i class="fas fa-flag"></i> Countries</a>
+                    </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'search' %}"><i class="fas fa-search"></i> Search Data</a>
+                    </li>
+                    {% if user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin:index' %}web"><i class="fas fa-cog"></i> Manage Data</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" type="button" data-toggle="modal" data-target="#excel"><i class="fas fa-plus"></i> Add Excel Data</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-user"></i> Welcome, {{request.user.get_full_name|default:request.user.username}}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        {% if breadtitle != "" %}
+        <nav aria-label="breadcrumb" style="border: 0 !important;">
+            <ol class="breadcrumb bg-green" style="border-radius: 0px">
+                <li class="breadcrumb-item ml-3"><a href="{% url 'dashboard' %}" class="text-white">Home</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">{{breadtitle}}</li>
+            </ol>
+        </nav>
+        {% endif %}
+        {% block 'content' %}
+        {% endblock %}
+        <div class="modal fade" id="excel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" enctype="multipart/form-data" action="{% url 'file' %}">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Add Excel Data</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+                                </div>
+                                <div class="custom-file">
+                                  <input name="excel" type="file" class="custom-file-input" id="file" required>
+                                  <label class="custom-file-label" for="file">Choose file</label>
+                                </div>
+                              </div>
+                              <script>
+                                    document.querySelector('.custom-file-input').addEventListener('change', (e) => {
+                                        let fileName = document.getElementById("file").files[0].name
+                                        let nextSibling = e.target.nextElementSibling
+                                        nextSibling.innerText = fileName
+                                    })
+                              </script>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary border-0 bg-green">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script>
+            CopyText = (text) => {
+                let el = document.createElement('textarea')
+                el.value = text
+                el.setAttribute('readonly', '')
+                el.style = {position: 'absolute', left: '-9999px'}
+                document.body.appendChild(el)
+                el.select()
+                document.execCommand('copy')
+                document.body.removeChild(el)
+            }
+            CopyEmail = () => {
+                let emails = document.getElementsByClassName("email")
+                let emailist = ""
+                for (i = 0; i < emails.length; i++) {
+                    emailist += " " + emails[i].innerText + ";"
+                }
+                CopyText(emailist)
+            }
+        </script>
+        <script src="{% static '/js/jquery.js' %}"></script>
+        <script src="{% static '/js/bootstrap.bundle.js' %}"></script>
+    </body>
+</html>
