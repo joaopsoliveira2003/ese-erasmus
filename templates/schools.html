@@ -1,0 +1,87 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block 'content' %}
+{% if count != 0 %}
+    <div class="container-fluid">
+        <h4 class="mt-3"><i class="fas fa-school"></i> {{name}}</h4>
+    </div>
+    <div class="container-fluid justify-content-center table-responsive">
+        <table class="table table-sm table-striped table-bordered table-hover mt-3">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Educational Sectors</th>
+                    <th>Coordinator</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Location</th>
+                    <th>Address</th>
+                    <th>Website</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in data %}
+                    <tr>
+                        <td>{{record.name}}</td>
+                        <td>
+                            {% for category in record.category.all %}
+                                {{category}};
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for sector in record.educational_sector.all %}
+                                {{sector}};
+                            {% endfor %}
+                        </td>
+                        <td>{{record.coordinator.name}}</td>
+                        <td><a href="mailto: {{record.email}}">{{record.email}}</a></td>
+                        <td><a target="_blank" href="tel: {{record.tel}}">{{record.tel}}</a></td>
+                        <td>{{record.city}}, {{record.city.country.name}}</td>
+                        <td>{{record.address}}</td>
+                        <td><a target="_blank" href="{{record.website}}">{{record.website}}</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="container text-center" style="padding-bottom: 10px">
+        {% if data.has_previous %}
+            <a href="?page=1"><i class="fas fa-step-backward" style="color: #44B78B !important"></i></a>
+            <a href="?page={{data.previous_page_number}}"><i class="fas fa-arrow-left"  style="color: #44B78B !important"></i></a>
+        {% else %}
+            <a class="disabled"><i class="fas fa-step-backward text-muted"></i></a>
+            <a class="disabled"><i class="fas fa-arrow-left text-muted"></i></a>
+        {% endif %}
+        <span class="current">Page {{data.number}} of {{data.paginator.num_pages}}</span>
+        {% if data.has_next %}
+            <a href="?page={{data.next_page_number}}"><i class="fas fa-arrow-right" style="color: #44B78B !important"></i></a>
+            <a href="?page={{data.paginator.num_pages}}"><i class="fas fa-step-forward" style="color: #44B78B !important"></i></a>
+        {% else %}
+            <a class="disabled"><i class="fas fa-arrow-right text-muted"></i></a>
+            <a class="disabled"><i class="fas fa-step-forward text-muted"></i></a>
+        {% endif %}
+        </div>
+    {% else %}
+    <div class="container h-75 d-flex align-items-center">
+        <div class="row w-100 justify-content-center mt-5 pt-5">
+            <div >
+                <div class="row">
+                    <div class="col-md-6">
+                        <img style="margin-top: -30px" class="img-fluid float-md-right mx-auto d-block" height="300" width="200" src="{% static '/img/error.png' %}">
+                    </div>
+                    <div class="col-md-6 text-center text-md-left">
+                        <h1>
+                            Oops!</h1>
+                        <h2>
+                            404 Not Found</h2>
+                        <div class="error-details">
+                            Sorry, an error has occured, there are no schools!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}

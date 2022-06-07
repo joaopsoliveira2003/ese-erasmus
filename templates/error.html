@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block 'content' %}
+<div class="container h-75 d-flex align-items-center">
+    <div class="row w-100 justify-content-center mt-5 pt-5">
+        <div >
+            <div class="row">
+                <div class="col-md-6">
+                    <img style="margin-top: -30px" class="img-fluid float-md-right mx-auto d-block" height="300" width="200" src="{% static '/img/error.png' %}">
+                </div>
+                <div class="col-md-6 text-center text-md-left">
+                    <h1>
+                        Oops!</h1>
+                    <h2>
+                        404 Not Found</h2>
+                    <div class="error-details">
+                        {{error}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

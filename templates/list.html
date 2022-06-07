@@ -1,0 +1,72 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block 'content' %}
+<div class="container-fluid">
+    <h4 class="mt-2">{{name}}</h4>
+    <div class="table-responsive mt-3 mb-1">
+        <table class="table table-sm table-striped table-bordered table-hover" id="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Educational Sectors</th>
+                    <th>Coordinator</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Location</th>
+                    <th>Address</th>
+                    <th>Website</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in data %}
+                    <tr>
+                        <td>{{record.name}}</td>
+                        <td>
+                            {% for category in record.category.all %}
+                                {{category}};
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for sector in record.educational_sector.all %}
+                                {{sector}};
+                            {% endfor %}
+                        </td>
+                        <td>{{record.coordinator.name}}</td>
+                        <td><a onclick="CopyText(this.innerHTML)" style="cursor: pointer" class="email">{{record.email}}</a></td>
+                        <td><a target="_blank" href="tel:{{record.tel}}">{{record.tel}}</a></td>
+                        <td>{{record.city}}, {{record.city.country.name}}</td>
+                        <td>{{record.address}}</td>
+                        <td><a target="_blank" href="{{record.website}}">{{record.website}}</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="pb-3 text-center">
+        <button class="btn btn-success" onclick="exportTableToExcel('table', 'search')">Export to Excel</button>
+        <button class="btn btn-success" onclick="CopyEmail()">Copy Emails</button>
+    </div>
+</div>
+<script>
+    exportTableToExcel = (tableID, filename = '') => {
+        let downloadLink
+        let dataType = 'application/vnd.ms-excel'
+        let tableSelect = document.getElementById(tableID)
+        let tableHTML = tableSelect.outerHTML.replace(/ /g, '%20')
+        filename = filename?filename+'.xls':'excel_data.xls'
+        downloadLink = document.createElement("a")
+        document.body.appendChild(downloadLink)
+        if (navigator.msSaveOrOpenBlob) {
+            let blob = new Blob(['\ufeff', tableHTML], {
+                type: dataType
+            })
+            navigator.msSaveOrOpenBlob(blob, filename)
+        } else {
+            downloadLink.href = 'data:' + dataType + ', ' + tableHTML
+            downloadLink.download = filename
+            downloadLink.click()
+        }
+    }
+</script>
+{% endblock %}
